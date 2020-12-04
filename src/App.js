@@ -3,72 +3,43 @@ import Potato from "./Potato"; // -> ./는 현재 파일(App.js)와 같은 경�
 // prop-types 다운로드 -> 내가 전달받은 props가 내가 원하는 props인지 확인
 import PropTypes from "prop-types";
 
-
-function Food({name, picture, rating}){ // props : Food 태그 안에 들어 있는 것
-  return(
-    <div>
-      <h2>I like {name}</h2>
-      <h4>{rating}/5.0</h4>
-      <img src={picture} alt={name} />
-    </div>
-  )
-}
-
-const foodILike = [
-  {
-    // id=1,
-    name: "Kimchi",
-    image:
-      "http://aeriskitchen.com/wp-content/uploads/2008/09/kimchi_bokkeumbap_02-.jpg",
-      rating: 4.8
-  },
-  {
-    // id=2,
-    name: "Samgyeopsal",
-    image:
-      "https://3.bp.blogspot.com/-hKwIBxIVcQw/WfsewX3fhJI/AAAAAAAAALk/yHxnxFXcfx4ZKSfHS_RQNKjw3bAC03AnACLcBGAs/s400/DSC07624.jpg",
-      rating: 4.4
-  },
-  {
-    // id=3,
-    name: "Bibimbap",
-    image:
-      "http://cdn-image.myrecipes.com/sites/default/files/styles/4_3_horizontal_-_1200x900/public/image/recipes/ck/12/03/bibimbop-ck-x.jpg?itok=RoXlp6Xb",
-      rating: 3.7
-  },
-  {
-    // id=4,
-    name: "Doncasu",
-    image:
-      "https://s3-media3.fl.yelpcdn.com/bphoto/7F9eTTQ_yxaWIRytAu5feA/ls.jpg",
-      rating: 4.5
-  },
-  {
-    // id=5,
-    name: "Kimbap",
-    image:
-      "http://cdn2.koreanbapsang.com/wp-content/uploads/2012/05/DSC_1238r-e1454170512295.jpg",
-      rating: 3
+class App extends React.Component{
+  // state는 object이고 compoenent의 data를 넣을 공간이 있음
+  state={
+    count:0 //내가 바꿀 데이터
+  };
+  add=()=>{
+    console.log("add");
+    // this.state.count=1; -> 이렇게 직접적으로 접근 x
+    // setState가 호출될 때마다 react는 새로운 state와 함께 render function 호출
+    this.setState(current=>({count:current.count+1})); //아래와 똑같이 동작 
+    // this.setState({count:this.state.count+1});
+  };
+  minus=()=>{
+    console.log("minus");
+    this.setState(current=>({count:current.count-1}));
+    // this.setState({count:this.state.count-1});
   }
-];
-
-Food.prototypes={
-  name: PropTypes.string.isRequired,
-  picture: PropTypes.string.isRequired,
-  rating: PropTypes.number.isRequired
-}
-
-function renderFood(dish){
-  return <Food 
-    key={dish.id} 
-    name={dish.name} 
-    picture={dish.image} 
-    rating={dish.rating}>
-    </Food>
-}
-
-function App() {
-  return<div>{foodILike.map(renderFood)}</div>;
+  componentDidMount(){
+    console.log("ComponenetDidMount");
+  }
+  componentDidUpdate(){
+    console.log("componentDidUpdate");
+  }
+  componentWillUnmount(){
+    console.log("componentWillUnmount");
+  }
+  render(){
+    console.log("render")
+    // return <h1>I am a class {this.state.count}</h1> //sate를 render하기 위해서는 {}에 감싸서 실행, class이기 떄문에 this를 붙여줘야 함.
+    return(
+      <div>
+        <h1>The number is {this.state.count}</h1>
+        <button onClick={this.add}>Add</button>
+        <button onClick={this.minus}>Minus</button>
+      </div>
+    )
+  }
 }
 
 export default App;
