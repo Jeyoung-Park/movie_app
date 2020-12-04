@@ -1,44 +1,65 @@
-import React from 'react';
-import Potato from "./Potato"; // -> ./는 현재 파일(App.js)와 같은 경로에 있다는 것을 의미
-// prop-types 다운로드 -> 내가 전달받은 props가 내가 원하는 props인지 확인
-import PropTypes from "prop-types";
+import React from "react";
+import axios from "axios";
+import Movie from "./Movie";
+import "./App.css"
 
 class App extends React.Component{
-  // state는 object이고 compoenent의 data를 넣을 공간이 있음
   state={
-    count:0 //내가 바꿀 데이터
+    isLoading:true,
+    movies:[]
   };
-  add=()=>{
-    console.log("add");
-    // this.state.count=1; -> 이렇게 직접적으로 접근 x
-    // setState가 호출될 때마다 react는 새로운 state와 함께 render function 호출
-    this.setState(current=>({count:current.count+1})); //아래와 똑같이 동작 
-    // this.setState({count:this.state.count+1});
-  };
-  minus=()=>{
-    console.log("minus");
-    this.setState(current=>({count:current.count-1}));
-    // this.setState({count:this.state.count-1});
+
+  getMovies=async()=>{
+    const {
+      data:{
+        data:{
+          movies
+        }
+      }
+    } = await axios.get("https://yts-proxy.now.sh/list_movies.json"); // 이 문장이 완료될 때까지 기다리도록 설정
+    // this.setState({moveis:movies});
+    this.setState({movies, isLoading:false});
+    console.log(movies);
+    // console.log(movies.data.data.movies); es6방식으로 위와 같이 표현 가능
   }
+
   componentDidMount(){
-    console.log("ComponenetDidMount");
+    // setTimeout(()=>{
+    //   this.setState({isLoading:false});
+    // }, 6000);
+    // axios는 fetch와 비슷한 역할
+    this.getMovies();
   }
-  componentDidUpdate(){
-    console.log("componentDidUpdate");
-  }
-  componentWillUnmount(){
-    console.log("componentWillUnmount");
-  }
+  
   render(){
-    console.log("render")
-    // return <h1>I am a class {this.state.count}</h1> //sate를 render하기 위해서는 {}에 감싸서 실행, class이기 떄문에 this를 붙여줘야 함.
-    return(
-      <div>
-        <h1>The number is {this.state.count}</h1>
-        <button onClick={this.add}>Add</button>
-        <button onClick={this.minus}>Minus</button>
-      </div>
-    )
+    const { isLoading,movies }=this.state;
+    return <div>{isLoading?"Loading..." : movies.map(movie=>{
+      console.log(movie);
+      return(
+        <section className="container">
+          {isLoading?(
+            <div className="loader">
+              <span class="loader__text">Loading...</span>
+            </div>
+          ):(
+            <div className="movies">
+              {movies.map(movie=>(
+                <Movie
+                key={movie.id} //map에 있는 각각의 아이템은 key가 필요
+                id={movie.id}
+                year={movie.year}
+                title={movie.title}
+                summary={movie.summary}
+                poster={movie.medium_cover_image}
+                genres={movie.genres}>
+                </Movie>
+              ))}
+            </div>
+          )}
+        </section>
+      ); 
+      // return <Movie key={movie.id} id={movie.id} year={movie.year} title={movie.title} summary={movie.summary} poster={movie.medium_cover_image} />;
+    })}</div>;
   }
 }
 
